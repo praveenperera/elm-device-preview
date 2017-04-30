@@ -3,17 +3,17 @@ nav {
 }
 
 .row {
-  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 
-.row.no-padding-top {
-  padding-top: 0;
+.row.no-padding {
+  padding-bottom: 0;
 }
 
 .content-row {
-  visibility: hidden;
+  display: none;
 }
 
-#iPhoneiFrame .content-row{
-  visibility: visible;
+.row.padding-top {
+  padding-top: 1rem;
 }
