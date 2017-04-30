@@ -17,3 +17,9 @@ nav {
 .row.padding-top {
   padding-top: 1rem;
 }
+
+iframe {
+  border-width: 1px;
+  border-style: groove;
+  border-color: initial;
+}

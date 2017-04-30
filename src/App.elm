@@ -189,6 +189,7 @@ iPhoneIframe =
         , srcdoc ""
         , id "iphoneFrame"
         , name "iphoneFrame"
+        , seamless True
         ]
         []
 
