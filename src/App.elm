@@ -1,4 +1,4 @@
-module App exposing (..)
+port module App exposing (..)
 
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
@@ -18,7 +18,9 @@ type alias Model =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { message = "Your Elm App is working!", logo = flags.path }, Cmd.none )
+    ( { message = "Your Elm App is working!", logo = flags.path }
+    , Cmd.batch [ renderPreview (), attachStyleSheet () ]
+    )
 
 
 
@@ -71,7 +73,16 @@ hiddenView =
 
 iPhoneIframe : Grid.Column Msg
 iPhoneIframe =
-    Grid.col [] [ iframe [ height 667, width 375, srcdoc "", id "iPhoneiFrame" ] [] ]
+    Grid.col []
+        [ iframe
+            [ height 667
+            , width 375
+            , srcdoc ""
+            , id "iphoneFrame"
+            , name "iphoneFrame"
+            ]
+            []
+        ]
 
 
 
@@ -81,6 +92,12 @@ iPhoneIframe =
 type alias Flags =
     { path : String
     }
+
+
+port attachStyleSheet : () -> Cmd msg
+
+
+port renderPreview : () -> Cmd msg
 
 
 main : Program Flags Model Msg
