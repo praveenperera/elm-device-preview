@@ -1,0 +1,19 @@
+nav {
+  margin-bottom: 1rem;
+}
+
+.row {
+  padding-top: 1.25rem;
+}
+
+.row.no-padding-top {
+  padding-top: 0;
+}
+
+.content-row {
+  visibility: hidden;
+}
+
+#iPhoneiFrame .content-row{
+  visibility: visible;
+}
