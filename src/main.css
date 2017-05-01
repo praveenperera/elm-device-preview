@@ -23,3 +23,7 @@ iframe {
   border-style: groove;
   border-color: initial;
 }
+
+.is-upgraded.mdl-js-slider.mdl-slider {
+  width: 80%;
+}

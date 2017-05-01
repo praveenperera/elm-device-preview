@@ -66,7 +66,7 @@ iPadModel =
     { name = "iPad"
     , width = 768
     , height = 1024
-    , zoom = 1.0
+    , zoom = 0.75
     }
 
 
@@ -157,6 +157,7 @@ hiddenView : Model -> Html Msg
 hiddenView model =
     div [ class "content-row" ]
         [ stylesheet "//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        , stylesheet "//cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.3.2/css/mdb.min.css"
         , navbar model.device.name
         , Grid.row []
             [ Grid.col [ Col.xs12 ]
@@ -217,7 +218,7 @@ frameControlSection model =
                     [ h4 [ class "pb-2 pt-2" ]
                         [ text "Set Zoom"
                         , text " ("
-                        , text ((model.device.zoom * 100) |> (Round.round 0))
+                        , text ((model.device.zoom * 100.0) |> (Round.round 2))
                         , text " %)"
                         ]
                     , slider model
@@ -262,7 +263,7 @@ frameControlForm =
 
 slider : Model -> Html Msg
 slider model =
-    p [ style [ ( "width", "300px" ) ] ]
+    p []
         [ Slider.view
             [ Slider.onChange ChangeZoom
             , Slider.value model.device.zoom
