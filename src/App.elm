@@ -8,7 +8,8 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Material.Slider as Slider
+import Round
 
 
 ---- MODEL ----
@@ -18,6 +19,15 @@ type alias Model =
     { name : String
     , age : String
     , location : String
+    , device : Device
+    }
+
+
+type alias Device =
+    { name : String
+    , width : Int
+    , height : Int
+    , zoom : Float
     }
 
 
@@ -26,6 +36,7 @@ initModel =
     { name = ""
     , age = ""
     , location = ""
+    , device = initDeviceModel
     }
 
 
@@ -36,6 +47,29 @@ init flags =
     )
 
 
+initDeviceModel : Device
+initDeviceModel =
+    iPhoneModel
+
+
+iPhoneModel : Device
+iPhoneModel =
+    { name = "iPhone"
+    , width = 375
+    , height = 667
+    , zoom = 1.0
+    }
+
+
+iPadModel : Device
+iPadModel =
+    { name = "iPad"
+    , width = 768
+    , height = 1024
+    , zoom = 1.0
+    }
+
+
 
 ---- UPDATE ----
 
@@ -44,6 +78,9 @@ type Msg
     = NameInput String
     | AgeInput String
     | LocationInput String
+    | ChangeZoom Float
+    | ChooseiPhone
+    | ChooseiPad
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -58,12 +95,27 @@ update msg model =
         LocationInput location ->
             ( { model | location = location }, renderPreview () )
 
+        ChooseiPhone ->
+            ( { model | device = iPhoneModel }, renderPreview () )
+
+        ChooseiPad ->
+            ( { model | device = iPadModel }, renderPreview () )
+
+        ChangeZoom zoom ->
+            ( { model | device = (setZoom model.device zoom) }, renderPreview () )
+
+
+setZoom : Device -> Float -> Device
+setZoom device zoom =
+    { device | zoom = zoom }
+
 
 
 ---- VIEW ----
 
 
-stylesheet =
+stylesheet : String -> Html Msg
+stylesheet link =
     let
         tag =
             "link"
@@ -71,7 +123,7 @@ stylesheet =
         attrs =
             [ attribute "rel" "stylesheet"
             , attribute "property" "stylesheet"
-            , attribute "href" "//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+            , attribute "href" link
             ]
 
         children =
@@ -83,28 +135,29 @@ stylesheet =
 view : Model -> Html Msg
 view model =
     div []
-        [ navbar
+        [ navbar "Elm Live Preview"
         , Grid.container [ class "main-container" ]
             [ hiddenView model
             , Grid.row [ Row.attrs [ class "padding-top" ] ]
-                [ Grid.col [] [ frameControlSection ]
-                , Grid.col [] [ iPhoneIframe ]
+                [ Grid.col [] [ frameControlSection model ]
+                , Grid.col [] [ iPhoneIframe model ]
                 ]
             ]
         ]
 
 
-navbar : Html Msg
-navbar =
+navbar : String -> Html Msg
+navbar title =
     nav [ class "navbar navbar-inverse bg-inverse" ]
-        [ h1 [ class "navbar-brand mb-1" ] [ text "Elm iPhone Preview" ]
+        [ h1 [ class "navbar-brand mb-1" ] [ text title ]
         ]
 
 
 hiddenView : Model -> Html Msg
 hiddenView model =
     div [ class "content-row" ]
-        [ stylesheet
+        [ stylesheet "//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        , navbar model.device.name
         , Grid.row []
             [ Grid.col [ Col.xs12 ]
                 [ Grid.row [ Row.attrs [ style [ ( "padding", "1rem" ) ] ] ]
@@ -148,8 +201,8 @@ hiddenView model =
         ]
 
 
-frameControlSection : Html Msg
-frameControlSection =
+frameControlSection : Model -> Html Msg
+frameControlSection model =
     Grid.row []
         [ Grid.col []
             [ Grid.row []
@@ -158,6 +211,32 @@ frameControlSection =
                 ]
             , Grid.row []
                 [ Grid.col [] [ frameControlForm ]
+                ]
+            , Grid.row []
+                [ Grid.col []
+                    [ h4 [ class "pb-2 pt-2" ]
+                        [ text "Set Zoom"
+                        , text " ("
+                        , text ((model.device.zoom * 100) |> (Round.round 0))
+                        , text " %)"
+                        ]
+                    , slider model
+                    ]
+                ]
+            , Grid.row []
+                [ Grid.col []
+                    [ Button.button
+                        [ Button.primary
+                        , Button.onClick ChooseiPhone
+                        ]
+                        [ text "iPhone" ]
+                    , Button.button
+                        [ Button.primary
+                        , Button.onClick ChooseiPad
+                        , Button.attrs [ class "ml-1" ]
+                        ]
+                        [ text "iPad" ]
+                    ]
                 ]
             ]
         ]
@@ -181,17 +260,38 @@ frameControlForm =
         ]
 
 
-iPhoneIframe : Html Msg
-iPhoneIframe =
-    iframe
-        [ height 667
-        , width 375
-        , srcdoc ""
-        , id "iphoneFrame"
-        , name "iphoneFrame"
-        , seamless True
+slider : Model -> Html Msg
+slider model =
+    p [ style [ ( "width", "300px" ) ] ]
+        [ Slider.view
+            [ Slider.onChange ChangeZoom
+            , Slider.value model.device.zoom
+            , Slider.min 0.1
+            , Slider.max 2.0
+            , Slider.step 0.01
+            ]
         ]
-        []
+
+
+iPhoneIframe : Model -> Html Msg
+iPhoneIframe model =
+    div [ style [ ( "height", "10px" ), ( "width", "10px" ) ] ]
+        [ iframe
+            [ height model.device.height
+            , width model.device.width
+            , srcdoc ""
+            , style
+                [ ( "transform"
+                  , (String.concat [ "scale(", (toString model.device.zoom), ")" ])
+                  )
+                , ( "transform-origin", "left top 0px" )
+                ]
+            , id "iphoneFrame"
+            , name "iphoneFrame"
+            , seamless False
+            ]
+            []
+        ]
 
 
 

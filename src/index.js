@@ -7,7 +7,7 @@ var root = document.getElementById("root");
 var app = Elm.App.embed(root, { path: logoPath });
 
 app.ports.renderPreview.subscribe(function() {
-  setTimeout(renderPreview, 200);
+  setTimeout(renderPreview, 40);
 });
 
 var renderPreview = function() {
