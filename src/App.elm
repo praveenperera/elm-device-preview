@@ -96,13 +96,13 @@ update msg model =
             ( { model | location = location }, renderPreview () )
 
         ChooseiPhone ->
-            ( { model | device = iPhoneModel }, renderPreview () )
+            ( { model | device = iPhoneModel }, Cmd.none )
 
         ChooseiPad ->
-            ( { model | device = iPadModel }, renderPreview () )
+            ( { model | device = iPadModel }, Cmd.none )
 
         ChangeZoom zoom ->
-            ( { model | device = (setZoom model.device zoom) }, renderPreview () )
+            ( { model | device = (setZoom model.device zoom) }, Cmd.none )
 
 
 setZoom : Device -> Float -> Device
@@ -216,7 +216,7 @@ frameControlSection model =
             , Grid.row []
                 [ Grid.col []
                     [ h4 [ class "pb-2 pt-2" ]
-                        [ text "Set Zoom"
+                        [ text "Zoom"
                         , text " ("
                         , text ((model.device.zoom * 100.0) |> (Round.round 2))
                         , text " %)"
